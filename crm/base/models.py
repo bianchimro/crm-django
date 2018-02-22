@@ -25,3 +25,35 @@ class Azienda(models.Model):
     class Meta:
         verbose_name_plural = "Aziende"
         ordering = ["nome", "codice"]
+
+
+class Persona(models.Model):
+    """
+    """
+    nome = models.CharField(max_length=30)
+    cognome = models.CharField(max_length=30)
+    email = models.EmailField(blank=True, null=True)
+    cf = models.CharField(max_length=30, blank=True, null=True)
+    azienda = models.ForeignKey(Azienda, models.CASCADE, related_name='persone')
+    sedi = models.ManyToManyField('Sede', related_name='sedi', blank=True)
+
+    def __str__(self):
+        return "%s - %s (%s)" % (self.nome, self.cognome, self.azienda)
+
+    class Meta:
+        verbose_name_plural = "Persone"
+        ordering = ["cognome", "nome"]
+
+
+class Sede(models.Model):
+    azienda = models.ForeignKey(Azienda, models.CASCADE, related_name='sedi')
+    codice = models.CharField(max_length=30)
+    indirizzo = models.CharField(max_length=200, null=True, blank=True)
+    citta = models.CharField('Città', max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return "%s - %s" % (self.codice, self.azienda.nome)
+
+    class Meta:
+        verbose_name_plural = "Sedi"
+        ordering = ["azienda", "codice"]
